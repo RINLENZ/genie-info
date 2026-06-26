@@ -1,0 +1,12 @@
+# Déploiement du front Next.js sur Netlify (monorepo).
+# Netlify détecte Next.js et installe automatiquement @netlify/plugin-nextjs.
+#
+# À configurer dans l'UI Netlify (Site settings → Environment variables) :
+#   NEXT_PUBLIC_API_URL = https://<votre-api>.onrender.com   (API FastAPI sur Render)
+
+[build]
+  base = "apps/web"
+  command = "npm run build"
+
+[build.environment]
+  NODE_VERSION = "20"

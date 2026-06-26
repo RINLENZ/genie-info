@@ -1,0 +1,36 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  --bg: #0e1a14;
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  background-color: theme("colors.ink");
+  color: theme("colors.paper");
+  font-family: var(--font-sans), system-ui, sans-serif;
+  -webkit-font-smoothing: antialiased;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html { scroll-behavior: auto; }
+  * { animation: none !important; transition: none !important; }
+}
+
+/* Filet animé « schéma technique » : trait qui se dessine */
+@layer components {
+  .rule-mono {
+    @apply font-mono text-xs tracking-[0.25em] uppercase text-accent;
+  }
+  .section-pad {
+    @apply px-6 md:px-10 py-20 md:py-28;
+  }
+  .container-ed {
+    @apply mx-auto max-w-editorial;
+  }
+}
