@@ -1,0 +1,11 @@
+# Garde le contexte de build léger (le Dockerfile ne copie que apps/api + db/init).
+.git
+**/node_modules
+**/.next
+apps/web
+frontend
+db_data
+minio_data
+*.md
+.env
+.env.*

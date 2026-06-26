@@ -47,12 +47,16 @@ services:
 
   # --- API (FastAPI / Python) ---
   api:
-    build: ./apps/api
+    build:
+      context: .
+      dockerfile: apps/api/Dockerfile
     container_name: gi_api
     environment:
       DATABASE_URL: postgresql://${POSTGRES_USER:-postgres}:${POSTGRES_PASSWORD:-postgres}@db:5432/${POSTGRES_DB:-genie_info}
       REDIS_URL: redis://redis:6379/0
       CORS_ORIGINS: ${CORS_ORIGINS:-http://localhost:3000}
+      RELOAD: "true"
+      # RUN_MIGRATIONS non défini : le conteneur Postgres initialise déjà db/init/.
     ports:
       - "${API_PORT:-8000}:8000"
     depends_on:
