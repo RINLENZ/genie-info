@@ -55,6 +55,9 @@ services:
       DATABASE_URL: postgresql://${POSTGRES_USER:-postgres}:${POSTGRES_PASSWORD:-postgres}@db:5432/${POSTGRES_DB:-genie_info}
       REDIS_URL: redis://redis:6379/0
       CORS_ORIGINS: ${CORS_ORIGINS:-http://localhost:3000}
+      JWT_SECRET: ${JWT_SECRET:-dev-secret-change-me}
+      ADMIN_EMAIL: ${ADMIN_EMAIL:-depginfo@enset-ebolowa.cm}
+      ADMIN_PASSWORD: ${ADMIN_PASSWORD:-Admin12345!}
       RELOAD: "true"
       # RUN_MIGRATIONS non défini : le conteneur Postgres initialise déjà db/init/.
     ports:

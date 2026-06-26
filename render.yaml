@@ -27,3 +27,11 @@ services:
       # Mettre l'URL exacte du site Netlify une fois connue (évite CORS "*").
       - key: CORS_ORIGINS
         value: "*"
+      # Secret JWT généré automatiquement par Render.
+      - key: JWT_SECRET
+        generateValue: true
+      # Compte admin : email en clair, mot de passe à saisir dans le dashboard.
+      - key: ADMIN_EMAIL
+        value: depginfo@enset-ebolowa.cm
+      - key: ADMIN_PASSWORD
+        sync: false
