@@ -1,0 +1,66 @@
+# ============================================================================
+#  Plateforme Génie Informatique — ENSET Ebolowa
+#  Stack de développement (Phase 1 — socle).
+#  Lancer :  docker compose up -d
+# ============================================================================
+
+services:
+  # --- Base de données PostgreSQL (schéma + seed montés au 1er démarrage) ---
+  db:
+    image: postgres:16-alpine
+    container_name: gi_db
+    environment:
+      POSTGRES_USER: ${POSTGRES_USER:-postgres}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-postgres}
+      POSTGRES_DB: ${POSTGRES_DB:-genie_info}
+    ports:
+      - "${DB_PORT:-5432}:5432"
+    volumes:
+      - db_data:/var/lib/postgresql/data
+      - ./db/init:/docker-entrypoint-initdb.d:ro   # 01_schema.sql puis 02_seed.sql
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER:-postgres} -d ${POSTGRES_DB:-genie_info}"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+
+  # --- Cache / files d'attente ---
+  redis:
+    image: redis:7-alpine
+    container_name: gi_redis
+    ports:
+      - "${REDIS_PORT:-6379}:6379"
+
+  # --- Stockage objet (photos, documents) compatible S3 ---
+  minio:
+    image: minio/minio:latest
+    container_name: gi_minio
+    command: server /data --console-address ":9001"
+    environment:
+      MINIO_ROOT_USER: ${MINIO_USER:-minio}
+      MINIO_ROOT_PASSWORD: ${MINIO_PASSWORD:-minio12345}
+    ports:
+      - "${MINIO_PORT:-9000}:9000"
+      - "${MINIO_CONSOLE_PORT:-9001}:9001"
+    volumes:
+      - minio_data:/data
+
+  # --- API (FastAPI / Python) ---
+  api:
+    build: ./apps/api
+    container_name: gi_api
+    environment:
+      DATABASE_URL: postgresql://${POSTGRES_USER:-postgres}:${POSTGRES_PASSWORD:-postgres}@db:5432/${POSTGRES_DB:-genie_info}
+      REDIS_URL: redis://redis:6379/0
+      CORS_ORIGINS: ${CORS_ORIGINS:-http://localhost:3000}
+    ports:
+      - "${API_PORT:-8000}:8000"
+    depends_on:
+      db:
+        condition: service_healthy
+    volumes:
+      - ./apps/api:/app   # hot-reload en dev
+
+volumes:
+  db_data:
+  minio_data:

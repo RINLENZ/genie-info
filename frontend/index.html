@@ -1,0 +1,1540 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <meta name="description" content="Département de Génie Informatique — ENSET Ebolowa. Formations DIPET, BTS, Licence Pro, Master Recherche en informatique industrielle et fondamentale."/>
+  <title>Département de Génie Informatique — ENSET Ebolowa</title>
+
+  <link rel="preconnect" href="https://fonts.googleapis.com"/>
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;0,700;1,400;1,600&family=DM+Sans:opsz,wght@9..40,300;400;500;600;700&family=DM+Mono:wght@400;500&family=Playfair+Display:wght@600;700&display=swap" rel="stylesheet"/>
+
+  <link rel="stylesheet" href="assets/vendor/font-awesome/css/all.min.css"/>
+  <link rel="stylesheet" href="assets/style/style.css"/>
+
+  <style>
+    /* ============================================================
+       GALERIE — SECTION ALBUMS (remplace l'ancienne .gallery)
+       ============================================================ */
+
+    /* --- Conteneur section --- */
+    .gallery {
+      padding: 5rem 0 4rem;
+      background: var(--bg-dark, #0e1a14);
+    }
+
+    .gallery .container {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 0 2rem;
+    }
+
+    /* --- En-tête section --- */
+    .gallery-header {
+      display: flex;
+      align-items: flex-end;
+      justify-content: space-between;
+      gap: 1.5rem;
+      margin-bottom: 2rem;
+      flex-wrap: wrap;
+    }
+
+    /* --- Filtres --- */
+    .gallery-filters {
+      display: flex;
+      gap: 8px;
+      flex-wrap: wrap;
+      margin-bottom: 2rem;
+    }
+
+    .gfilter {
+      padding: 7px 18px;
+      border-radius: 999px;
+      border: 1px solid rgba(255,255,255,.18);
+      background: transparent;
+      color: rgba(255,255,255,.6);
+      font-size: 13px;
+      font-family: inherit;
+      cursor: pointer;
+      transition: all .18s;
+      letter-spacing: .02em;
+    }
+
+    .gfilter.active,
+    .gfilter:hover {
+      background: var(--emerald-mid, #1a7a4e);
+      color: #fff;
+      border-color: var(--emerald-mid, #1a7a4e);
+    }
+
+    /* --- Grille d'albums --- */
+    .albums-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+      gap: 18px;
+    }
+
+    /* --- Carte album --- */
+    .album-card {
+      border-radius: 14px;
+      overflow: hidden;
+      background: rgba(255,255,255,.04);
+      border: 1px solid rgba(255,255,255,.09);
+      cursor: pointer;
+      transition: transform .2s, box-shadow .2s, border-color .2s;
+    }
+
+    .album-card:hover {
+      transform: translateY(-4px);
+      box-shadow: 0 12px 32px rgba(0,0,0,.35);
+      border-color: rgba(255,255,255,.18);
+    }
+
+    /* --- Miniature composée --- */
+    .album-thumb {
+      position: relative;
+      aspect-ratio: 4 / 3;
+      overflow: hidden;
+      background: rgba(255,255,255,.04);
+    }
+
+    .album-thumb-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      grid-template-rows: 1fr 1fr;
+      height: 100%;
+      gap: 2px;
+    }
+
+    .album-thumb-grid .t0 {
+      grid-column: 1 / 3;
+      grid-row: 1 / 2;
+    }
+
+    .thumb-cell {
+      overflow: hidden;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: rgba(255,255,255,.05);
+    }
+
+    .thumb-cell i {
+      font-size: 22px;
+      color: rgba(255,255,255,.25);
+    }
+
+    .thumb-cell img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      display: block;
+      transition: transform .4s ease;
+    }
+
+    .album-card:hover .thumb-cell img {
+      transform: scale(1.05);
+    }
+
+    .album-badge {
+      position: absolute;
+      top: 10px;
+      left: 10px;
+      padding: 4px 11px;
+      border-radius: 999px;
+      font-size: 11px;
+      font-weight: 600;
+      color: #fff;
+      letter-spacing: .04em;
+      text-transform: uppercase;
+      backdrop-filter: blur(6px);
+    }
+
+    .album-count {
+      position: absolute;
+      bottom: 10px;
+      right: 10px;
+      background: rgba(0,0,0,.55);
+      color: rgba(255,255,255,.9);
+      font-size: 11px;
+      padding: 3px 9px;
+      border-radius: 999px;
+      backdrop-filter: blur(6px);
+      display: flex;
+      align-items: center;
+      gap: 4px;
+    }
+
+    /* --- Infos album --- */
+    .album-info {
+      padding: .8rem 1rem .9rem;
+    }
+
+    .album-name {
+      font-size: 14px;
+      font-weight: 600;
+      color: #fff;
+      margin-bottom: 3px;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .album-name i {
+      font-size: 13px;
+      opacity: .85;
+    }
+
+    .album-desc {
+      font-size: 12px;
+      color: rgba(255,255,255,.5);
+      line-height: 1.5;
+    }
+
+    /* ============================================================
+       LIGHTBOX ALBUMS
+       ============================================================ */
+    .album-overlay {
+      display: none;
+      position: fixed;
+      inset: 0;
+      background: rgba(0,0,0,.82);
+      z-index: 9999;
+      align-items: center;
+      justify-content: center;
+      backdrop-filter: blur(4px);
+    }
+
+    .album-overlay.open {
+      display: flex;
+    }
+
+    .album-lightbox {
+      background: #111;
+      border: 1px solid rgba(255,255,255,.1);
+      border-radius: 16px;
+      width: min(95vw, 860px);
+      max-height: 92vh;
+      overflow: hidden;
+      display: flex;
+      flex-direction: column;
+      animation: lbIn .2s ease;
+    }
+
+    @keyframes lbIn {
+      from { opacity: 0; transform: scale(.96) translateY(8px); }
+      to   { opacity: 1; transform: scale(1) translateY(0); }
+    }
+
+    /* Header lightbox */
+    .lb-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: .9rem 1.25rem;
+      border-bottom: 1px solid rgba(255,255,255,.08);
+      gap: 1rem;
+      flex-shrink: 0;
+    }
+
+    .lb-header-left {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .lb-badge {
+      padding: 4px 12px;
+      border-radius: 999px;
+      font-size: 11px;
+      font-weight: 600;
+      color: #fff;
+      text-transform: uppercase;
+      letter-spacing: .05em;
+      flex-shrink: 0;
+    }
+
+    .lb-album-name {
+      font-size: 15px;
+      font-weight: 600;
+      color: #fff;
+      line-height: 1.2;
+    }
+
+    .lb-album-desc {
+      font-size: 12px;
+      color: rgba(255,255,255,.45);
+      margin-top: 2px;
+    }
+
+    .lb-close {
+      width: 34px;
+      height: 34px;
+      border-radius: 50%;
+      border: 1px solid rgba(255,255,255,.15);
+      background: transparent;
+      color: rgba(255,255,255,.7);
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 16px;
+      transition: all .15s;
+      flex-shrink: 0;
+    }
+
+    .lb-close:hover {
+      background: rgba(255,255,255,.1);
+      color: #fff;
+    }
+
+    /* Zone image principale */
+    .lb-main {
+      position: relative;
+      background: #000;
+      flex: 1;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      min-height: 280px;
+      overflow: hidden;
+    }
+
+    .lb-main img {
+      max-width: 100%;
+      max-height: 380px;
+      object-fit: contain;
+      display: block;
+      user-select: none;
+    }
+
+    .lb-placeholder {
+      font-size: 64px;
+      color: rgba(255,255,255,.12);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      width: 100%;
+      min-height: 280px;
+    }
+
+    .lb-nav {
+      position: absolute;
+      top: 50%;
+      transform: translateY(-50%);
+      width: 38px;
+      height: 38px;
+      border-radius: 50%;
+      border: none;
+      background: rgba(255,255,255,.12);
+      color: #fff;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 16px;
+      transition: background .15s;
+      backdrop-filter: blur(4px);
+      z-index: 2;
+    }
+
+    .lb-nav:hover { background: rgba(255,255,255,.25); }
+    .lb-nav.prev  { left: 12px; }
+    .lb-nav.next  { right: 12px; }
+
+    /* Bande de miniatures */
+    .lb-strip {
+      display: flex;
+      gap: 8px;
+      padding: 10px 14px;
+      overflow-x: auto;
+      border-top: 1px solid rgba(255,255,255,.08);
+      background: rgba(255,255,255,.03);
+      flex-shrink: 0;
+      scrollbar-width: thin;
+      scrollbar-color: rgba(255,255,255,.15) transparent;
+    }
+
+    .lb-strip::-webkit-scrollbar { height: 4px; }
+    .lb-strip::-webkit-scrollbar-thumb { background: rgba(255,255,255,.15); border-radius: 2px; }
+
+    .strip-thumb {
+      width: 62px;
+      height: 50px;
+      border-radius: 7px;
+      overflow: hidden;
+      flex-shrink: 0;
+      cursor: pointer;
+      border: 2px solid transparent;
+      transition: border-color .15s, opacity .15s;
+      background: rgba(255,255,255,.06);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .strip-thumb img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      display: block;
+    }
+
+    .strip-thumb i {
+      font-size: 18px;
+      color: rgba(255,255,255,.3);
+    }
+
+    .strip-thumb.active {
+      border-color: var(--emerald-mid, #1a7a4e);
+    }
+
+    .strip-thumb:not(.active) { opacity: .55; }
+    .strip-thumb:hover { opacity: 1; }
+
+    /* Légende */
+    .lb-caption {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: .65rem 1.25rem;
+      border-top: 1px solid rgba(255,255,255,.08);
+      flex-shrink: 0;
+      gap: 1rem;
+    }
+
+    .lb-cap-title {
+      font-size: 13px;
+      font-weight: 600;
+      color: #fff;
+    }
+
+    .lb-cap-sub {
+      font-size: 12px;
+      color: rgba(255,255,255,.45);
+      margin-top: 2px;
+    }
+
+    .lb-counter {
+      font-size: 12px;
+      color: rgba(255,255,255,.4);
+      white-space: nowrap;
+      flex-shrink: 0;
+    }
+
+    /* Responsive */
+    @media (max-width: 600px) {
+      .albums-grid { grid-template-columns: repeat(2, 1fr); gap: 10px; }
+      .album-info { padding: .6rem .75rem .7rem; }
+      .album-name { font-size: 13px; }
+      .lb-main img { max-height: 240px; }
+    }
+  </style>
+</head>
+<body>
+
+<!--top bar -->
+<div class="topbar">
+  <div class="topbar-left">
+    <span><i class="fas fa-map-marker-alt"></i>Ebolowa, Sud-Cameroun</span>
+    <a href="mailto:depginfo@enset-ebolowa.cm"><i class="fas fa-envelope"></i>depginfo@enset-ebolowa.cm</a>
+    <a href="tel:+237692581157"><i class="fas fa-phone"></i>+237 692 581 157</a>
+  </div>
+  <div class="topbar-right">
+    <div class="lang-switcher">
+      <button class="active" onclick="setLang('fr')">FR</button>
+      <button onclick="setLang('en')">EN</button>
+    </div>
+  </div>
+</div>
+
+<!--navbar-->
+<nav class="navbar" id="navbar">
+  <div class="nav-logo">
+    <div class="nav-logo-emblem">
+      <img src="assets/img/logo/logo.webp" alt="Logo département génie informatique" class="logo-img"/>
+    </div>
+    <div class="nav-logo-text">
+      <div class="school">ENSET Ebolowa</div>
+      <div class="dept">Dép. Génie Informatique</div>
+    </div>
+  </div>
+
+  <div class="nav-links">
+    <a href="#accueil" class="active">Accueil</a>
+    <a href="#apropos">À Propos</a>
+    <div class="nav-dropdown">
+      <a href="#formations">Formations <i class="fas fa-chevron-down" style="font-size:0.58rem;margin-left:3px;"></i></a>
+      <div class="dropdown-menu">
+        <a href="formations.html"><i class="fas fa-graduation-cap"></i>DIPET 1 — Info. Fondamentale</a>
+        <a href="formations.html"><i class="fas fa-school"></i>DIPET 1 — Info. Industrielle</a>
+        <a href="formations.html"><i class="fas fa-university"></i>DIPET 2 — Info. Industrielle</a>
+        <a href="formations.html"><i class="fas fa-certificate"></i>BTS Informatique</a>
+        <a href="formations.html"><i class="fas fa-industry"></i>Licence Pro — Info. Industrielle</a>
+        <a href="formations.html"><i class="fas fa-flask"></i>Master Recherche</a>
+      </div>
+    </div>
+    <a href="#equipe">Équipe</a>
+    <a href="#actualites">Actualités</a>
+    <a href="#galerie">Galerie</a>
+    <a href="#contact">Contact</a>
+    <a href="#admission" class="nav-cta-admission">
+      <i class="fas fa-user" style="margin-right:6px;font-size:0.78rem;"></i>Mon Compte
+    </a>
+    <button onclick="openAccountModal()" class="nav-cta-admission">
+      <i class="fas fa-user me-2"></i>Mon Compte
+    </button>
+  </div>
+
+  <button class="hamburger" id="hamburger" onclick="toggleMenu()" aria-label="Menu" aria-expanded="false">
+    <span></span><span></span><span></span>
+  </button>
+</nav>
+
+<!--mobile -->
+<div class="mobile-menu" id="mobileMenu" role="navigation">
+  <a href="#accueil"    onclick="toggleMenu()"><i class="fas fa-home" style="width:18px;color:var(--emerald-mid);"></i>Accueil</a>
+  <a href="#apropos"    onclick="toggleMenu()"><i class="fas fa-info-circle" style="width:18px;color:var(--emerald-mid);"></i>À Propos</a>
+  <a href="formations.html" onclick="toggleMenu()"><i class="fas fa-graduation-cap" style="width:18px;color:var(--emerald-mid);"></i>Formations</a>
+  <a href="#equipe"     onclick="toggleMenu()"><i class="fas fa-users" style="width:18px;color:var(--emerald-mid);"></i>Équipe</a>
+  <a href="#actualites" onclick="toggleMenu()"><i class="fas fa-newspaper" style="width:18px;color:var(--emerald-mid);"></i>Actualités</a>
+  <a href="#galerie"    onclick="toggleMenu()"><i class="fas fa-images" style="width:18px;color:var(--emerald-mid);"></i>Galerie</a>
+  <a href="#contact"    onclick="toggleMenu()"><i class="fas fa-envelope" style="width:18px;color:var(--emerald-mid);"></i>Contact</a>
+  <a href="#admission"  onclick="toggleMenu()" style="color:var(--emerald-mid);font-weight:600;">
+    <i class="fas fa-user" style="width:18px;"></i>Mon Compte
+  </a>
+</div>
+
+<!--hero-carrousel -->
+<section class="hero" id="accueil" aria-label="Bannière principale">
+  <div class="hero-noise" aria-hidden="true"></div>
+
+  <div class="carousel-slide slide-1 active">
+    <div class="slide-bg" data-parallax="true"></div>
+    <div class="slide-content">
+      <div class="slide-inner">
+        <div class="slide-label">Département de Génie Informatique</div>
+        <h1 id="typeH1"></h1>
+        <p>L'ENSET d'Ebolowa forme les ingénieurs et techniciens de demain, alliant rigueur académique et maîtrise des systèmes informatiques industriels.</p>
+        <div class="slide-cta">
+          <a href="#formations" class="btn-primary"><i class="fas fa-graduation-cap"></i>Nos Formations</a>
+          <a href="#apropos" class="btn-outline"><i class="fas fa-info-circle"></i>Découvrir</a>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="carousel-slide slide-2">
+    <div class="slide-bg" data-parallax="true"></div>
+    <div class="slide-content">
+      <div class="slide-inner">
+        <div class="slide-label">Recherche & Innovation</div>
+        <h1>Plus de <em>400 projets</em> réalisés par nos étudiants et enseignants</h1>
+        <p>Des projets concrets en systèmes embarqués, intelligence artificielle, réseaux et développement logiciel qui répondent aux défis technologiques africains.</p>
+        <div class="slide-cta">
+          <a href="#actualites" class="btn-primary"><i class="fas fa-flask"></i>Voir les Projets</a>
+          <a href="#contact" class="btn-outline"><i class="fas fa-handshake"></i>Partenariat</a>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="carousel-slide slide-3">
+    <div class="slide-bg" data-parallax="true"></div>
+    <div class="slide-content">
+      <div class="slide-inner">
+        <div class="slide-label">Admissions 2025–2026</div>
+        <h1>Rejoignez une communauté de <em>400 étudiants</em> passionnés</h1>
+        <p>DIPET 1 & 2, BTS, Licence Professionnelle ou Master Recherche : choisissez la formation qui correspond à vos ambitions.</p>
+        <div class="slide-cta">
+          <a href="#admission" class="btn-primary"><i class="fas fa-user-plus"></i>Candidater</a>
+          <a href="formations.html" class="btn-outline"><i class="fas fa-book-open"></i>Nos Programmes</a>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="carousel-dots" id="carouselDots" role="tablist" aria-label="Navigation carrousel">
+    <button class="carousel-dot active" onclick="goToSlide(0)" aria-label="Slide 1"></button>
+    <button class="carousel-dot" onclick="goToSlide(1)" aria-label="Slide 2"></button>
+    <button class="carousel-dot" onclick="goToSlide(2)" aria-label="Slide 3"></button>
+  </div>
+
+  <div class="hero-scroll" aria-hidden="true">
+    <i class="fas fa-chevron-down"></i>
+    <span>Défiler</span>
+  </div>
+</section>
+
+<!--stats-->
+<div class="stats-ribbon" role="region" aria-label="Chiffres clés">
+  <div class="stat-cell">
+    <div class="stat-num"><span class="counter" data-target="400">0</span><span class="stat-unit">+</span></div>
+    <div class="stat-lbl">Étudiants Actifs</div>
+  </div>
+  <div class="stat-cell">
+    <div class="stat-num"><span class="counter" data-target="8">0</span></div>
+    <div class="stat-lbl">Années d'Existence</div>
+  </div>
+  <div class="stat-cell">
+    <div class="stat-num"><span class="counter" data-target="400">0</span><span class="stat-unit">+</span></div>
+    <div class="stat-lbl">Projets Réalisés</div>
+  </div>
+  <div class="stat-cell">
+    <div class="stat-num"><span class="counter" data-target="28">0</span></div>
+    <div class="stat-lbl">Enseignants-Chercheurs</div>
+  </div>
+</div>
+
+<!--apropos -->
+<section class="about" id="apropos">
+  <div class="container">
+    <div class="about-grid">
+
+      <div class="about-img-block reveal">
+        <div class="about-img-main">
+          <img src="assets/img/equipe/olleolle.jpg" alt="Salle de TP du département" loading="lazy"/>
+          <div class="about-img-overlay"></div>
+          <div class="about-img-label">
+            <div class="big">2017</div>
+            <div class="small">Depuis</div>
+          </div>
+        </div>
+        <div class="about-img-float">
+          <div class="fnum">Pr.</div>
+          <div class="ftxt">Olle Olle<br>CD - DA</div>
+        </div>
+      </div>
+
+      <div class="about-content reveal">
+        <div class="section-eyebrow">À Propos du Département</div>
+        <h2 class="section-title">Former les ingénieurs de l'<em>ère numérique</em> africaine</h2>
+        <p class="about-text">
+          Le Département de Génie Informatique de l'ENSET d'Ebolowa est une entité académique et technique dédiée à la formation d'ingénieurs et de cadres supérieurs maîtrisant les fondements théoriques et les applications pratiques de l'informatique, adaptées aux réalités et aux défis technologiques du continent africain.
+        </p>
+        <div class="about-pillars">
+          <div class="pillar">
+            <div class="pillar-icon"><i class="fas fa-cogs"></i></div>
+            <strong>Pédagogie par projets</strong>
+            <span>Chaque étudiant développe des solutions concrètes dès la première année.</span>
+          </div>
+          <div class="pillar">
+            <div class="pillar-icon"><i class="fas fa-industry"></i></div>
+            <strong>Insertion professionnelle</strong>
+            <span>Partenariats avec des entreprises du secteur numérique et industriel.</span>
+          </div>
+          <div class="pillar">
+            <div class="pillar-icon"><i class="fas fa-flask"></i></div>
+            <strong>Recherche appliquée</strong>
+            <span>Laboratoires équipés pour les systèmes embarqués, robotique, réseaux et IA.</span>
+          </div>
+          <div class="pillar">
+            <div class="pillar-icon"><i class="fas fa-globe-africa"></i></div>
+            <strong>Impact africain</strong>
+            <span>Solutions adaptées aux contextes et contraintes technologiques locaux.</span>
+          </div>
+        </div>
+        <div class="about-cta">
+          <a href="apropos.html" class="btn-blue">
+            <i class="fas fa-info-circle"></i>
+            En savoir plus sur le département
+            <i class="fas fa-arrow-right"></i>
+          </a>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<!--formations-->
+<section class="formations" id="formations">
+  <div class="container">
+    <div class="formations-header reveal">
+      <div>
+        <div class="section-eyebrow">Nos Programmes</div>
+        <h2 class="section-title">Formations en<br><em>Génie Informatique</em></h2>
+        <p class="section-sub">Du DIPET 1 au Master, des parcours rigoureux conçus pour former des techniciens et ingénieurs compétitifs sur le marché national et international.</p>
+      </div>
+    </div>
+
+    <div class="formations-grid reveal">
+
+      <div class="formation-card">
+        <div class="fc-number">01</div>
+        <div class="fc-level">
+          <div class="fc-level-dot" style="background:linear-gradient(135deg,#1a4a7a,#2563a8);">DIPET 1</div>
+          <span>Info. Fondamentale</span>
+        </div>
+        <div class="fc-title">Diplôme de Professeur d'Enseignement Technique — 1er Grade</div>
+        <div class="fc-desc">Formation pédagogique et technique de haut niveau couvrant le développement logiciel, les réseaux, bases de données, mathématiques discrètes et la maintenance des systèmes informatiques.</div>
+        <div class="fc-meta">
+          <div class="fc-meta-item"><i class="fas fa-clock"></i>3 ans</div>
+          <div class="fc-meta-item"><i class="fas fa-users"></i>14 places</div>
+          <div class="fc-meta-item"><i class="fas fa-calendar"></i>Oct. 2026</div>
+        </div>
+        <div class="fc-tags">
+          <span class="fc-tag">Algorithmique</span><span class="fc-tag">Réseaux</span><span class="fc-tag">BDD</span><span class="fc-tag">Électronique</span>
+        </div>
+        <a href="formations.html" class="fc-link">Voir le programme <i class="fas fa-arrow-right"></i></a>
+      </div>
+
+      <div class="formation-card">
+        <div class="fc-number">02</div>
+        <div class="fc-level">
+          <div class="fc-level-dot" style="background:linear-gradient(135deg,#0f5c3a,#1a7a4e);">DIPET 1</div>
+          <span>Info. Industrielle</span>
+        </div>
+        <div class="fc-title">Diplôme de Professeur d'Enseignement Technique — Info. Industrielle</div>
+        <div class="fc-desc">Spécialisation en automatique, systèmes embarqués, robotique et contrôle industriel pour les enseignants du technique.</div>
+        <div class="fc-meta">
+          <div class="fc-meta-item"><i class="fas fa-clock"></i>3 ans</div>
+          <div class="fc-meta-item"><i class="fas fa-users"></i>14 places</div>
+          <div class="fc-meta-item"><i class="fas fa-calendar"></i>Oct. 2026</div>
+        </div>
+        <div class="fc-tags">
+          <span class="fc-tag">Systèmes embarqués</span><span class="fc-tag">Robotique</span><span class="fc-tag">Automatique</span>
+        </div>
+        <a href="formations.html" class="fc-link">Voir le programme <i class="fas fa-arrow-right"></i></a>
+      </div>
+
+      <div class="formation-card">
+        <div class="fc-number">03</div>
+        <div class="fc-level">
+          <div class="fc-level-dot" style="background:linear-gradient(135deg,#1a7a4e,#22a864);">DIPET 2</div>
+          <span>2 ans</span>
+        </div>
+        <div class="fc-title">Diplôme de Professeur d'Enseignement Technique — 2e Grade</div>
+        <div class="fc-desc">Formation avancée couvrant Machine Learning, cryptographie, bases de données distribuées, robotique et mathématiques pour l'enseignement technique supérieur.</div>
+        <div class="fc-meta">
+          <div class="fc-meta-item"><i class="fas fa-clock"></i>2 ans</div>
+          <div class="fc-meta-item"><i class="fas fa-users"></i>7 places</div>
+          <div class="fc-meta-item"><i class="fas fa-calendar"></i>Sept. 2026</div>
+        </div>
+        <div class="fc-tags">
+          <span class="fc-tag">ML</span><span class="fc-tag">Cryptographie</span><span class="fc-tag">BDD Distribuées</span>
+        </div>
+        <a href="formations.html" class="fc-link">Voir le programme <i class="fas fa-arrow-right"></i></a>
+      </div>
+
+      <div class="formation-card">
+        <div class="fc-number">04</div>
+        <div class="fc-level">
+          <div class="fc-level-dot" style="background:linear-gradient(135deg,#c9983a,#e8b860);">BTS</div>
+          <span>2 ans</span>
+        </div>
+        <div class="fc-title">Brevet de Technicien Supérieur en Informatique</div>
+        <div class="fc-desc">Formation technique couvrant le développement de systèmes industriels, les réseaux, l'automatisme, la robotique et la maintenance des systèmes informatiques.</div>
+        <div class="fc-meta">
+          <div class="fc-meta-item"><i class="fas fa-clock"></i>2 ans</div>
+          <div class="fc-meta-item"><i class="fas fa-users"></i>80 places</div>
+          <div class="fc-meta-item"><i class="fas fa-calendar"></i>Sept. 2025</div>
+        </div>
+        <div class="fc-tags">
+          <span class="fc-tag">Réseaux</span><span class="fc-tag">Développement</span><span class="fc-tag">BDD</span><span class="fc-tag">Systèmes</span>
+        </div>
+        <a href="formations.html" class="fc-link">Voir le programme <i class="fas fa-arrow-right"></i></a>
+      </div>
+
+      <div class="formation-card">
+        <div class="fc-number">05</div>
+        <div class="fc-level">
+          <div class="fc-level-dot" style="background:linear-gradient(135deg,#1a4a7a,#2563a8);">LP</div>
+          <span>1 an après BTS</span>
+        </div>
+        <div class="fc-title">Licence Professionnelle — Informatique Industrielle</div>
+        <div class="fc-desc">Spécialisation en automatique, systèmes embarqués, SCADA et contrôle industriel. Formation à forte employabilité dans le secteur de l'industrie 4.0.</div>
+        <div class="fc-meta">
+          <div class="fc-meta-item"><i class="fas fa-clock"></i>1 an</div>
+          <div class="fc-meta-item"><i class="fas fa-users"></i>20 places</div>
+          <div class="fc-meta-item"><i class="fas fa-calendar"></i>Sept. 2026</div>
+        </div>
+        <div class="fc-tags">
+          <span class="fc-tag">Systèmes embarqués</span><span class="fc-tag">SCADA</span><span class="fc-tag">Automatique</span>
+        </div>
+        <a href="formations.html" class="fc-link">Voir le programme <i class="fas fa-arrow-right"></i></a>
+      </div>
+
+      <div class="formation-card">
+        <div class="fc-number">06</div>
+        <div class="fc-level">
+          <div class="fc-level-dot" style="background:linear-gradient(135deg,#6b21a8,#a855f7);">M2</div>
+          <span>Master Recherche</span>
+        </div>
+        <div class="fc-title">Master Recherche en Informatique</div>
+        <div class="fc-desc">Formation de haut niveau en recherche et ingénierie avancée. Prépare aux métiers de chercheur, d'ingénieur R&D et d'expert en systèmes industriels complexes.</div>
+        <div class="fc-meta">
+          <div class="fc-meta-item"><i class="fas fa-clock"></i>2 ans</div>
+          <div class="fc-meta-item"><i class="fas fa-users"></i>7 places</div>
+          <div class="fc-meta-item"><i class="fas fa-calendar"></i>Nov. 2026</div>
+        </div>
+        <div class="fc-tags">
+          <span class="fc-tag">IA & ML</span><span class="fc-tag">IoT</span><span class="fc-tag">Recherche</span>
+        </div>
+        <a href="formations.html" class="fc-link">Voir le programme <i class="fas fa-arrow-right"></i></a>
+      </div>
+
+    </div>
+
+    <div class="formations-cta reveal">
+      <a href="formations.html" class="btn-formations">
+        <i class="fas fa-layer-group"></i>
+        Voir toutes les formations en détail
+        <i class="fas fa-arrow-right"></i>
+      </a>
+    </div>
+  </div>
+</section>
+
+<!--equipes-->
+<section class="team" id="equipe">
+  <div class="container">
+    <div class="team-header reveal">
+      <div>
+        <div class="section-eyebrow">Notre Corps Enseignant</div>
+        <h2 class="section-title">Une équipe <em>d'experts</em><br>à votre service</h2>
+        <p class="section-sub">Des enseignants-chercheurs et praticiens reconnus, alliant excellence académique et expérience professionnelle.</p>
+      </div>
+    </div>
+
+    <div class="team-grid">
+
+      <div class="team-card team-card-featured reveal">
+        <div class="featured-badge"><i class="fas fa-star" style="margin-right:4px;font-size:0.58rem;"></i>Chef de Département</div>
+        <div class="team-card-img">
+          <div class="team-card-img-placeholder"><i class="fas fa-user-tie"></i></div>
+          <img src="assets/img/equipe/olle.jpg" alt="Pr. Olle Olle Daniel" loading="lazy" onerror="this.style.display='none'"/>
+          <div class="team-dept-chip">Direction</div>
+        </div>
+        <div class="team-body">
+          <div class="team-name">Pr. Olle Olle Daniel</div>
+          <div class="team-role">Chef de Département · Pr. Titulaire</div>
+          <div class="team-specialties">
+            <span class="team-spec">Data Analytics</span>
+            <span class="team-spec">IA</span>
+            <span class="team-spec">BI</span>
+          </div>
+          <p class="team-bio">Docteur en Informatique, expert en analyse de données et intelligence artificielle appliquée au contexte africain.</p>
+          <div class="team-links">
+            <a href="#" class="team-link-btn mail" title="Email"><i class="fas fa-envelope"></i></a>
+            <a href="#" class="team-link-btn" title="LinkedIn"><i class="fab fa-linkedin-in"></i></a>
+            <a href="#" class="team-link-btn" title="Publications"><i class="fas fa-book-open"></i></a>
+          </div>
+        </div>
+      </div>
+
+      <div class="team-card reveal">
+        <div class="team-card-img">
+          <div class="team-card-img-placeholder"><i class="fas fa-user-tie"></i></div>
+          <img src="assets/img/equipe/Tchuani.webp" alt="Dr. TCHUANI Diane" loading="lazy" onerror="this.style.display='none'"/>
+          <div class="team-dept-chip">Réseaux</div>
+        </div>
+        <div class="team-body">
+          <div class="team-name">Dr. TCHUANI Diane</div>
+          <div class="team-role">Chargée de Cours</div>
+          <div class="team-specialties">
+            <span class="team-spec">Programmation</span>
+            <span class="team-spec">Réseaux</span>
+            <span class="team-spec">SE</span>
+          </div>
+          <p class="team-bio">Experte en sécurité des réseaux informatiques, coordinatrice du laboratoire réseaux et systèmes distribués.</p>
+          <div class="team-links">
+            <a href="#" class="team-link-btn mail"><i class="fas fa-envelope"></i></a>
+            <a href="#" class="team-link-btn"><i class="fab fa-linkedin-in"></i></a>
+            <a href="#" class="team-link-btn"><i class="fas fa-book-open"></i></a>
+          </div>
+        </div>
+      </div>
+
+      <div class="team-card reveal">
+        <div class="team-card-img">
+          <div class="team-card-img-placeholder"><i class="fas fa-user-tie"></i></div>
+          <img src="assets/img/div/salle6.jpg" alt="Dr. MEDZO Charles" loading="lazy" onerror="this.style.display='none'"/>
+          <div class="team-dept-chip">Embarqué</div>
+        </div>
+        <div class="team-body">
+          <div class="team-name">Dr. MEDZO Charles</div>
+          <div class="team-role">Assistant</div>
+          <div class="team-specialties">
+            <span class="team-spec">Systèmes embarqués</span>
+            <span class="team-spec">Physique</span>
+            <span class="team-spec">Robotique</span>
+          </div>
+          <p class="team-bio">Spécialiste des systèmes embarqués temps-réel, responsable du laboratoire IoT et automatisme industriel.</p>
+          <div class="team-links">
+            <a href="#" class="team-link-btn mail"><i class="fas fa-envelope"></i></a>
+            <a href="#" class="team-link-btn"><i class="fab fa-linkedin-in"></i></a>
+            <a href="#" class="team-link-btn"><i class="fas fa-book-open"></i></a>
+          </div>
+        </div>
+      </div>
+
+    </div>
+
+    <div class="team-see-all reveal">
+      <a href="apropos.html#equipe" class="btn-see-all">Voir tout le corps enseignant <i class="fas fa-arrow-right"></i></a>
+    </div>
+  </div>
+</section>
+
+<!--actualites-->
+<section class="news" id="actualites">
+  <div class="container">
+    <div class="news-header reveal">
+      <div>
+        <div class="section-eyebrow">Actualités & Événements</div>
+        <h2 class="section-title">Dernières <em>nouvelles</em><br>du département</h2>
+      </div>
+      <a href="#" class="btn-see-all" style="white-space:nowrap;flex-shrink:0;">Toutes les actus <i class="fas fa-arrow-right"></i></a>
+    </div>
+
+    <div class="news-grid reveal">
+      <div class="news-card featured">
+        <div class="news-img">
+          <img src="https://images.unsplash.com/photo-1485827404703-89b55fcc595e?w=800&auto=format&fit=crop" alt="Hackathon IA" loading="lazy" onerror="this.style.display='none'"/>
+          <div class="news-cat-tag">Événement</div>
+        </div>
+        <div class="news-body">
+          <div class="news-meta">
+            <span class="news-date"><i class="fas fa-calendar" style="margin-right:6px;color:var(--emerald-mid);font-size:0.68rem;"></i>Mars 2025</span>
+          </div>
+          <h3>Hackathon annuel — Thème : IA & Agriculture Camerounaise</h3>
+          <p>Les équipes étudiantes s'affrontent sur 48h pour concevoir des solutions numériques au service de l'agriculture camerounaise. Une édition record avec plus de 20 équipes participantes.</p>
+          <a href="#" class="news-link">Lire l'article <i class="fas fa-arrow-right"></i></a>
+        </div>
+      </div>
+
+      <div class="news-card">
+        <div class="news-img" style="background:linear-gradient(135deg,var(--emerald),var(--blue));">
+          <img src="https://images.unsplash.com/photo-1567427017947-545c5f8d16ad?w=600&auto=format&fit=crop" alt="Prix innovation" loading="lazy" onerror="this.style.display='none'"/>
+          <div class="news-cat-tag" style="background:var(--gold);">Distinction</div>
+        </div>
+        <div class="news-body">
+          <div class="news-meta">
+            <span class="news-date"><i class="fas fa-calendar" style="margin-right:6px;color:var(--emerald-mid);font-size:0.68rem;"></i>Fév. 2025</span>
+          </div>
+          <h3>Étudiant primé au concours national d'innovation technologique</h3>
+          <p>M. Toko Serge (Master 2) remporte le 1er prix pour son projet de supervision industrielle à faible coût basé sur Raspberry Pi.</p>
+          <a href="#" class="news-link">Lire l'article <i class="fas fa-arrow-right"></i></a>
+        </div>
+      </div>
+
+      <div class="news-card">
+        <div class="news-img" style="background:linear-gradient(135deg,var(--navy),var(--blue-light));">
+          <img src="https://images.unsplash.com/photo-1523240795612-9a054b0db644?w=600&auto=format&fit=crop" alt="Admissions" loading="lazy" onerror="this.style.display='none'"/>
+          <div class="news-cat-tag" style="background:#17590c;">Admission</div>
+        </div>
+        <div class="news-body">
+          <div class="news-meta">
+            <span class="news-date"><i class="fas fa-calendar" style="margin-right:6px;color:var(--emerald-mid);font-size:0.68rem;"></i>Jan. 2025</span>
+          </div>
+          <h3>Ouverture des inscriptions — Année académique 2025–2026</h3>
+          <p>Les candidatures pour tous les niveaux (BTS, Licence, Master) sont désormais ouvertes. Date limite : 30 juin 2025.</p>
+          <a href="#" class="news-link">Lire l'article <i class="fas fa-arrow-right"></i></a>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============================================================
+     GALERIE — SECTION ALBUMS (nouvelle version)
+     ============================================================ -->
+<section class="gallery" id="galerie">
+  <div class="container">
+
+    <div class="gallery-header reveal">
+      <div>
+        <div class="section-eyebrow">Galerie</div>
+        <h2 class="section-title">La vie au <em style="color:var(--gold-light, #e8b860);">département</em></h2>
+        <p style="color:rgba(255,255,255,.55);font-size:14px;margin-top:.4rem;line-height:1.6;">
+          Explorez nos albums — cours, compétitions, formations terrain et moments forts de la vie étudiante.
+        </p>
+      </div>
+    </div>
+
+    <!-- Filtres -->
+    <div class="gallery-filters reveal" id="galleryFilters">
+      <button class="gfilter active" data-cat="all">Tout</button>
+      <button class="gfilter" data-cat="cours">Cours & Amphis</button>
+      <button class="gfilter" data-cat="labo">Laboratoires</button>
+      <button class="gfilter" data-cat="event">Événements</button>
+      <button class="gfilter" data-cat="campus">Campus</button>
+    </div>
+
+    <!-- Grille des albums -->
+    <div class="albums-grid reveal" id="albumsGrid">
+      <!-- Généré par JS -->
+    </div>
+
+  </div>
+</section>
+
+<!-- LIGHTBOX ALBUMS -->
+<div class="album-overlay" id="albumOverlay">
+  <div class="album-lightbox" id="albumLightbox">
+
+    <!-- En-tête lightbox -->
+    <div class="lb-header">
+      <div class="lb-header-left">
+        <span class="lb-badge" id="lbBadge"></span>
+        <div>
+          <div class="lb-album-name" id="lbAlbumName"></div>
+          <div class="lb-album-desc" id="lbAlbumDesc"></div>
+        </div>
+      </div>
+      <button class="lb-close" id="lbCloseBtn" aria-label="Fermer la galerie">
+        <i class="fas fa-times"></i>
+      </button>
+    </div>
+
+    <!-- Image principale -->
+    <div class="lb-main" id="lbMain">
+      <button class="lb-nav prev" id="lbPrev" aria-label="Photo précédente">
+        <i class="fas fa-chevron-left"></i>
+      </button>
+      <img id="lbImg" src="" alt="" style="display:none;"/>
+      <div class="lb-placeholder" id="lbPlaceholder">
+        <i class="fas fa-image"></i>
+      </div>
+      <button class="lb-nav next" id="lbNext" aria-label="Photo suivante">
+        <i class="fas fa-chevron-right"></i>
+      </button>
+    </div>
+
+    <!-- Bande de miniatures -->
+    <div class="lb-strip" id="lbStrip"></div>
+
+    <!-- Légende + compteur -->
+    <div class="lb-caption">
+      <div>
+        <div class="lb-cap-title" id="lbCapTitle"></div>
+        <div class="lb-cap-sub" id="lbCapSub"></div>
+      </div>
+      <div class="lb-counter" id="lbCounter"></div>
+    </div>
+
+  </div>
+</div>
+
+<!--contact-->
+<section class="contact-section" id="contact">
+  <div class="container">
+    <div class="contact-grid">
+
+      <div class="contact-info reveal">
+        <div class="section-eyebrow">Nous Contacter</div>
+        <h2 class="section-title">Parlons de votre<br><em>projet académique</em></h2>
+        <p class="section-sub">Notre équipe pédagogique et administrative est disponible pour répondre à toutes vos questions concernant les admissions, les programmes ou les partenariats.</p>
+        <div class="contact-details">
+          <div class="contact-item">
+            <div class="contact-icon"><i class="fas fa-map-marker-alt"></i></div>
+            <div class="contact-item-text"><strong>Adresse</strong><span>ENSET d'Ebolowa, Sud-Cameroun</span></div>
+          </div>
+          <div class="contact-item">
+            <div class="contact-icon"><i class="fas fa-envelope"></i></div>
+            <div class="contact-item-text"><strong>Email</strong><span>depginfo@enset-ebolowa.cm</span></div>
+          </div>
+          <div class="contact-item">
+            <div class="contact-icon"><i class="fas fa-phone"></i></div>
+            <div class="contact-item-text"><strong>Téléphone</strong><span>+237 692 581 157</span></div>
+          </div>
+          <div class="contact-item">
+            <div class="contact-icon"><i class="fas fa-clock"></i></div>
+            <div class="contact-item-text"><strong>Heures d'ouverture</strong><span>Lun – Ven : 08h00 – 17h00</span></div>
+          </div>
+        </div>
+        <div class="contact-map">
+          <i class="fas fa-map-marked-alt"></i>
+          <div class="contact-map-label">Ebolowa, Cameroun — ENSET</div>
+        </div>
+      </div>
+
+      <div class="contact-form reveal">
+        <div class="contact-form-title">Envoyer un message</div>
+        <div class="contact-form-sub">Nous répondons sous 24 à 48h ouvrées.</div>
+        <div class="form-progress" id="formProgress">
+          <div class="fstep" id="fs1"></div>
+          <div class="fstep" id="fs2"></div>
+          <div class="fstep" id="fs3"></div>
+          <div class="fstep" id="fs4"></div>
+        </div>
+        <div id="contactForm">
+          <div class="form-row">
+            <div class="form-group" id="fg-nom">
+              <label class="form-label" for="fNom">Nom complet</label>
+              <input class="form-input" type="text" id="fNom" placeholder="Votre nom complet" oninput="validateField('nom')" autocomplete="name"/>
+              <div class="form-error" role="alert">Veuillez entrer votre nom complet (min. 2 caractères).</div>
+            </div>
+            <div class="form-group" id="fg-email">
+              <label class="form-label" for="fEmail">Adresse email</label>
+              <input class="form-input" type="email" id="fEmail" placeholder="votre@email.cm" oninput="validateField('email')" autocomplete="email"/>
+              <div class="form-error" role="alert">Veuillez entrer une adresse email valide.</div>
+            </div>
+          </div>
+          <div class="form-group" id="fg-sujet">
+            <label class="form-label" for="fSujet">Sujet</label>
+            <select class="form-input" id="fSujet" onchange="validateField('sujet')">
+              <option value="">— Choisir un sujet —</option>
+              <option>Admission & Inscription</option>
+              <option>Informations sur une formation</option>
+              <option>Partenariat / Stage</option>
+              <option>Recherche & Publications</option>
+              <option>Autre</option>
+            </select>
+            <div class="form-error" role="alert">Veuillez choisir un sujet.</div>
+          </div>
+          <div class="form-group" id="fg-msg">
+            <label class="form-label" for="fMsg">Message</label>
+            <textarea class="form-input" id="fMsg" placeholder="Décrivez votre demande en détail…" oninput="validateField('msg')"></textarea>
+            <div class="form-error" role="alert">Le message doit contenir au moins 20 caractères.</div>
+          </div>
+          <button class="form-submit" onclick="submitForm()" type="button">
+            <i class="fas fa-paper-plane"></i> Envoyer le message
+          </button>
+        </div>
+        <div class="form-success" id="formSuccess" role="status">
+          <div class="success-icon"><i class="fas fa-check"></i></div>
+          <h4>Message envoyé !</h4>
+          <p>Merci pour votre message. Notre équipe vous répondra dans les 24 à 48 heures ouvrées.</p>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<!--footer-->
+<footer>
+  <div class="container">
+    <div class="footer-grid">
+      <div class="footer-brand">
+        <div class="footer-brand-name">ENSET d'Ebolowa · Génie Informatique</div>
+        <p>Département de Génie Informatique — ENSET d'Ebolowa. Former les ingénieurs et techniciens du numérique africain depuis 2017.</p>
+        <div class="footer-slogan">"Forger l'excellence numérique, bâtir l'avenir technologique"</div>
+        <div class="footer-socials">
+          <a href="#" class="social-btn" aria-label="Facebook"><i class="fab fa-facebook-f"></i></a>
+          <a href="#" class="social-btn" aria-label="LinkedIn"><i class="fab fa-linkedin-in"></i></a>
+          <a href="#" class="social-btn" aria-label="YouTube"><i class="fab fa-youtube"></i></a>
+          <a href="#" class="social-btn" aria-label="Twitter"><i class="fab fa-twitter"></i></a>
+          <a href="#" class="social-btn" aria-label="GitHub"><i class="fab fa-github"></i></a>
+        </div>
+      </div>
+      <div class="footer-col">
+        <h4>Formations</h4>
+        <ul>
+          <li><a href="formations.html">DIPET 1 & 2</a></li>
+          <li><a href="formations.html">BTS Informatique</a></li>
+          <li><a href="formations.html">Licence Pro – Info. Ind.</a></li>
+          <li><a href="formations.html">TIC</a></li>
+          <li><a href="formations.html">Master Recherche</a></li>
+        </ul>
+      </div>
+      <div class="footer-col">
+        <h4>Navigation</h4>
+        <ul>
+          <li><a href="#accueil">Accueil</a></li>
+          <li><a href="#apropos">À Propos</a></li>
+          <li><a href="#equipe">Équipe</a></li>
+          <li><a href="#actualites">Actualités</a></li>
+          <li><a href="#galerie">Galerie</a></li>
+          <li><a href="#contact">Contact</a></li>
+        </ul>
+      </div>
+      <div class="footer-col">
+        <h4>Admission</h4>
+        <ul>
+          <li><a href="#">Conditions d'accès</a></li>
+          <li><a href="#">Dossier de candidature</a></li>
+          <li><a href="#">Calendrier académique</a></li>
+          <li><a href="#">FAQ</a></li>
+          <li><a href="#">Bourses & Aides</a></li>
+        </ul>
+      </div>
+    </div>
+  </div>
+  <div class="footer-bottom">
+    <span>© 2025 Département Génie Informatique — ENSET Ebolowa. Tous droits réservés.</span>
+    <span>By <i class="fas fa-users" style="color:var(--emerald-light);"></i> Club Info, Departement de Genie Informatique</span>
+  </div>
+</footer>
+
+<button class="back-top" id="backTop" onclick="window.scrollTo({top:0,behavior:'smooth'})" aria-label="Retour en haut">
+  <i class="fas fa-chevron-up"></i>
+</button>
+
+<!-- Account Modal -->
+<div class="modal fade" id="accountModal" tabindex="-1" aria-labelledby="accountModalLabel" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title font-heading fw-bold" id="accountModalLabel">
+          <i class="fas fa-user me-2 text-primary"></i>
+          Espace Utilisateur
+        </h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body">
+        <form id="loginForm" class="needs-validation" novalidate>
+          <div class="mb-3">
+            <label for="loginEmail" class="form-label fw-medium">Email *</label>
+            <input type="email" class="form-control form-control-custom" id="loginEmail" required>
+            <div class="invalid-feedback">Veuillez saisir un email valide.</div>
+          </div>
+          <div class="mb-3">
+            <label for="loginPassword" class="form-label fw-medium">Mot de passe *</label>
+            <input type="password" class="form-control form-control-custom" id="loginPassword" required>
+            <div class="invalid-feedback">Veuillez saisir votre mot de passe.</div>
+          </div>
+          <div class="d-flex justify-content-between align-items-center mb-3">
+            <div class="form-check">
+              <input class="form-check-input" type="checkbox" id="rememberMe">
+              <label class="form-check-label small" for="rememberMe">Se souvenir de moi</label>
+            </div>
+            <a href="#" class="text-primary-custom small text-decoration-none">Mot de passe oublié ?</a>
+          </div>
+          <button type="submit" class="btn-primary-custom w-100">
+            <i class="fas fa-sign-in-alt me-2"></i>Se connecter
+          </button>
+        </form>
+        <div class="text-center mt-3">
+          <span class="text-muted">ou</span>
+        </div>
+        <button class="btn btn-outline-primary w-100 mt-3">
+          <i class="fas fa-user-plus me-2"></i>Créer un compte
+        </button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script src="assets/js/main.js"></script>
+
+<!-- ============================================================
+     GALERIE — SCRIPT ALBUMS
+     Placez ce script APRÈS assets/js/main.js
+     ============================================================ -->
+<script>
+(function () {
+
+  /* ----------------------------------------------------------
+     DONNÉES — Albums & Photos
+     Remplacez les chemins src par vos vraies photos.
+     Chaque album a : id, cat, name, color, desc, icon, photos[]
+  ---------------------------------------------------------- */
+  var ALBUMS = [
+    {
+      id: 1,
+      cat: 'cours',
+      name: 'Sessions de cours',
+      color: '#185FA5',
+      desc: 'Cours magistraux, TD et amphis',
+      icon: 'fa-chalkboard-teacher',
+      photos: [
+        { src: 'assets/img/slide/campus4.webp',  title: 'Cours magistral — Algorithmique',  sub: 'Amphi A · 2024' },
+        { src: 'assets/img/slide/campus7.webp',  title: 'Travaux dirigés — Groupe 3',       sub: 'Salle B102 · 2024' },
+        { src: 'assets/img/div/salle6.jpg',      title: 'Cours de systèmes embarqués',      sub: 'Dr. Medzo Charles' },
+        { src: 'assets/img/slide/campus4.webp',  title: 'Cours de réseaux',                 sub: 'Dr. Tchuani Diane' },
+      ]
+    },
+    {
+      id: 2,
+      cat: 'labo',
+      name: 'Travaux pratiques',
+      color: '#0F6E56',
+      desc: 'TP en laboratoires équipés',
+      icon: 'fa-microchip',
+      photos: [
+        { src: 'assets/img/slide/campus2.webp',  title: 'Laboratoire informatique',         sub: 'Salle TP1 · 2024' },
+        { src: 'assets/img/slide/campus6.webp',  title: 'Lab. Systèmes Embarqués',          sub: 'Arduino & Raspberry Pi' },
+        { src: 'assets/img/slide/campus2.webp',  title: 'TP Réseaux — Cisco',               sub: 'Labo réseaux · 2024' },
+        { src: 'assets/img/div/salle6.jpg',      title: 'TP Robotique',                     sub: 'Bras articulé · 2025' },
+      ]
+    },
+    {
+      id: 3,
+      cat: 'event',
+      name: 'Coupe du Directeur',
+      color: '#BA7517',
+      desc: 'Compétition inter-filières annuelle',
+      icon: 'fa-trophy',
+      photos: [
+        { src: 'assets/img/slide/campus5.webp',  title: "Cérémonie d'ouverture",            sub: 'Coupe du Directeur 2024' },
+        { src: 'assets/img/slide/campus5.webp',  title: 'Finale Foot — GInfo vs GC',        sub: 'Terrain ENSET · 2024' },
+        { src: 'assets/img/slide/campus5.webp',  title: 'Remise des trophées',              sub: 'Pr. Olle Olle Daniel' },
+        { src: 'assets/img/slide/campus7.webp',  title: 'Équipe gagnante 2024',             sub: 'Section BTS 2' },
+      ]
+    },
+    {
+      id: 4,
+      cat: 'event',
+      name: 'Hackathon & Événements',
+      color: '#993C1D',
+      desc: 'Compétitions et projets innovants',
+      icon: 'fa-bolt',
+      photos: [
+        { src: 'assets/img/slide/campus2.webp',  title: 'Hackathon IA & Agriculture',       sub: '48h non-stop · Mars 2025' },
+        { src: 'assets/img/slide/campus5.webp',  title: "Prix national d'innovation",       sub: 'M. Toko Serge — Master 2' },
+        { src: 'assets/img/slide/campus7.webp',  title: 'Présentation des projets',         sub: 'Jury de soutenance 2025' },
+        { src: 'assets/img/slide/campus2.webp',  title: 'Atelier IA & Machine Learning',    sub: 'Club Info · 2025' },
+      ]
+    },
+    {
+      id: 5,
+      cat: 'cours',
+      name: 'Formations terrain',
+      color: '#533489',
+      desc: 'Stages, visites et formations pros',
+      icon: 'fa-industry',
+      photos: [
+        { src: 'assets/img/slide/campus6.webp',  title: 'Visite industrielle CICAM',        sub: 'Section LP Info. Industrielle' },
+        { src: 'assets/img/slide/campus7.webp',  title: 'Formation SCADA — Terrain',        sub: 'Licence Pro 2024' },
+        { src: 'assets/img/slide/campus2.webp',  title: 'Stage entreprise — Orange Cm',     sub: 'Étudiants BTS · 2024' },
+        { src: 'assets/img/div/salle6.jpg',      title: 'Atelier automatisme',              sub: 'Schneider Electric · 2024' },
+      ]
+    },
+    {
+      id: 6,
+      cat: 'campus',
+      name: 'Vie du campus',
+      color: '#3B6D11',
+      desc: 'Espaces, bibliothèque et campus',
+      icon: 'fa-university',
+      photos: [
+        { src: 'assets/img/slide/campus1.webp',  title: 'Campus ENSET Ebolowa',             sub: 'Vue principale · 2024' },
+        { src: 'assets/img/slide/campus3.webp',  title: 'Bibliothèque & espace études',     sub: 'RDC bâtiment B' },
+        { src: 'assets/img/equipe/olle.jpg',     title: 'Bureau du chef de département',    sub: 'Pr. Olle Olle Daniel' },
+        { src: 'assets/img/slide/campus1.webp',  title: 'Amphithéâtre central',             sub: 'Capacité 200 places' },
+      ]
+    },
+  ];
+
+  /* ----------------------------------------------------------
+     État
+  ---------------------------------------------------------- */
+  var curAlbum = null;
+  var curIdx   = 0;
+  var curCat   = 'all';
+
+  /* ----------------------------------------------------------
+     Helpers
+  ---------------------------------------------------------- */
+  function catLabel(c) {
+    var map = { cours: 'Cours', labo: 'Labo', event: 'Événement', campus: 'Campus' };
+    return map[c] || c;
+  }
+
+  function thumbCell(photo, cls) {
+    var base = '<div class="thumb-cell' + (cls ? ' ' + cls : '') + '">';
+    if (photo) {
+      base += '<img src="' + photo.src + '" alt="' + photo.title + '" loading="lazy" '
+            + 'onerror="this.style.display=\'none\'">';
+    } else {
+      base += '<i class="fas fa-image"></i>';
+    }
+    return base + '</div>';
+  }
+
+  /* ----------------------------------------------------------
+     Construction de la grille
+  ---------------------------------------------------------- */
+  function buildGrid() {
+    var grid = document.getElementById('albumsGrid');
+    if (!grid) return;
+    grid.innerHTML = '';
+
+    var list = (curCat === 'all')
+      ? ALBUMS
+      : ALBUMS.filter(function (a) { return a.cat === curCat; });
+
+    list.forEach(function (album) {
+      var p = album.photos;
+
+      var card = document.createElement('div');
+      card.className = 'album-card';
+      card.setAttribute('role', 'button');
+      card.setAttribute('tabindex', '0');
+      card.setAttribute('aria-label', 'Ouvrir l\'album ' + album.name);
+
+      card.innerHTML =
+        '<div class="album-thumb">'
+        + '<div class="album-thumb-grid">'
+        + thumbCell(p[0], 't0')
+        + thumbCell(p[1])
+        + thumbCell(p[2])
+        + '</div>'
+        + '<div class="album-badge" style="background:' + album.color + '">'
+        + catLabel(album.cat)
+        + '</div>'
+        + '<div class="album-count">'
+        + '<i class="fas fa-images" style="font-size:10px;"></i> ' + p.length
+        + '</div>'
+        + '</div>'
+        + '<div class="album-info">'
+        + '<div class="album-name">'
+        + '<i class="fas ' + album.icon + '" style="color:' + album.color + ';font-size:13px;" aria-hidden="true"></i>'
+        + album.name
+        + '</div>'
+        + '<div class="album-desc">' + album.desc + '</div>'
+        + '</div>';
+
+      card.addEventListener('click', function () { openAlbum(album); });
+      card.addEventListener('keydown', function (e) {
+        if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); openAlbum(album); }
+      });
+
+      grid.appendChild(card);
+    });
+  }
+
+  /* ----------------------------------------------------------
+     Lightbox — ouverture
+  ---------------------------------------------------------- */
+  function openAlbum(album) {
+    curAlbum = album;
+    curIdx   = 0;
+
+    document.getElementById('lbBadge').textContent      = catLabel(album.cat);
+    document.getElementById('lbBadge').style.background = album.color;
+    document.getElementById('lbAlbumName').textContent  = album.name;
+    document.getElementById('lbAlbumDesc').textContent  = album.desc;
+
+    buildStrip();
+    showPhoto(0);
+
+    var overlay = document.getElementById('albumOverlay');
+    overlay.classList.add('open');
+    document.body.style.overflow = 'hidden';
+  }
+
+  /* ----------------------------------------------------------
+     Lightbox — bande de miniatures
+  ---------------------------------------------------------- */
+  function buildStrip() {
+    var strip = document.getElementById('lbStrip');
+    strip.innerHTML = '';
+
+    curAlbum.photos.forEach(function (photo, i) {
+      var thumb = document.createElement('div');
+      thumb.className = 'strip-thumb' + (i === 0 ? ' active' : '');
+      thumb.setAttribute('role', 'button');
+      thumb.setAttribute('tabindex', '0');
+      thumb.setAttribute('aria-label', 'Photo ' + (i + 1));
+      thumb.innerHTML = '<img src="' + photo.src + '" alt="' + photo.title + '" loading="lazy" '
+                       + 'onerror="this.style.display=\'none\'">';
+
+      (function (idx) {
+        thumb.addEventListener('click', function () { showPhoto(idx); });
+        thumb.addEventListener('keydown', function (e) {
+          if (e.key === 'Enter') showPhoto(idx);
+        });
+      })(i);
+
+      strip.appendChild(thumb);
+    });
+  }
+
+  /* ----------------------------------------------------------
+     Lightbox — afficher une photo
+  ---------------------------------------------------------- */
+  function showPhoto(idx) {
+    var photo = curAlbum.photos[idx];
+    curIdx = idx;
+
+    var img = document.getElementById('lbImg');
+    var ph  = document.getElementById('lbPlaceholder');
+
+    img.src = photo.src;
+    img.alt = photo.title;
+    img.style.display = 'block';
+    ph.style.display  = 'none';
+
+    img.onerror = function () {
+      img.style.display = 'none';
+      ph.style.display  = 'flex';
+    };
+
+    document.getElementById('lbCapTitle').textContent = photo.title;
+    document.getElementById('lbCapSub').textContent   = photo.sub;
+    document.getElementById('lbCounter').textContent  = (idx + 1) + ' / ' + curAlbum.photos.length;
+
+    /* Mise à jour de la bande */
+    var thumbs = document.querySelectorAll('#lbStrip .strip-thumb');
+    thumbs.forEach(function (t, i) {
+      t.classList.toggle('active', i === idx);
+    });
+
+    /* Scroll de la bande vers la miniature active */
+    if (thumbs[idx]) {
+      thumbs[idx].scrollIntoView({ inline: 'center', behavior: 'smooth', block: 'nearest' });
+    }
+  }
+
+  /* ----------------------------------------------------------
+     Lightbox — navigation
+  ---------------------------------------------------------- */
+  function navPhoto(dir) {
+    var n = curAlbum.photos.length;
+    showPhoto((curIdx + dir + n) % n);
+  }
+
+  /* ----------------------------------------------------------
+     Lightbox — fermeture
+  ---------------------------------------------------------- */
+  function closeLb() {
+    document.getElementById('albumOverlay').classList.remove('open');
+    document.body.style.overflow = '';
+    curAlbum = null;
+  }
+
+  /* ----------------------------------------------------------
+     Filtres
+  ---------------------------------------------------------- */
+  var filtersEl = document.getElementById('galleryFilters');
+  if (filtersEl) {
+    filtersEl.addEventListener('click', function (e) {
+      var btn = e.target.closest('.gfilter');
+      if (!btn) return;
+      document.querySelectorAll('.gfilter').forEach(function (b) { b.classList.remove('active'); });
+      btn.classList.add('active');
+      curCat = btn.getAttribute('data-cat');
+      buildGrid();
+    });
+  }
+
+  /* ----------------------------------------------------------
+     Événements lightbox
+  ---------------------------------------------------------- */
+  var overlay = document.getElementById('albumOverlay');
+  if (overlay) {
+    overlay.addEventListener('click', function (e) {
+      if (e.target === overlay) closeLb();
+    });
+  }
+
+  var closeBtn = document.getElementById('lbCloseBtn');
+  if (closeBtn) closeBtn.addEventListener('click', closeLb);
+
+  var prevBtn = document.getElementById('lbPrev');
+  if (prevBtn) prevBtn.addEventListener('click', function () { navPhoto(-1); });
+
+  var nextBtn = document.getElementById('lbNext');
+  if (nextBtn) nextBtn.addEventListener('click', function () { navPhoto(1); });
+
+  /* Clavier */
+  document.addEventListener('keydown', function (e) {
+    if (!curAlbum) return;
+    if (e.key === 'ArrowLeft')  navPhoto(-1);
+    if (e.key === 'ArrowRight') navPhoto(1);
+    if (e.key === 'Escape')     closeLb();
+  });
+
+  /* ----------------------------------------------------------
+     Init
+  ---------------------------------------------------------- */
+  buildGrid();
+
+})();
+</script>
+
+</body>
+</html>
