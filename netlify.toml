@@ -6,6 +6,8 @@
 [build]
   base = "apps/web"
   command = "npm run build"
+  # Doit différer du base directory (exigence du plugin Next.js). Relatif au base.
+  publish = ".next"
 
 [build.environment]
   NODE_VERSION = "20"
