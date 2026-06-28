@@ -68,7 +68,7 @@ def list_formations():
 def list_equipe():
     with get_conn() as conn:
         return conn.execute(
-            """SELECT nom, fonction, photo_url
+            """SELECT nom, fonction, photo_url, bio
                FROM membre_equipe ORDER BY ordre_affichage"""
         ).fetchall()
 
@@ -77,9 +77,19 @@ def list_equipe():
 def list_actualites():
     with get_conn() as conn:
         return conn.execute(
-            """SELECT titre, slug, resume, categorie, date_publication
+            """SELECT titre, slug, resume, categorie, image_url, date_publication
                FROM actualite WHERE est_publie = true
                ORDER BY date_publication DESC"""
+        ).fetchall()
+
+
+@app.get("/api/media")
+def list_media():
+    """Galerie : médias regroupés par album."""
+    with get_conn() as conn:
+        return conn.execute(
+            """SELECT fichier_url, legende, album, ordre
+               FROM media ORDER BY album, ordre"""
         ).fetchall()
 
 

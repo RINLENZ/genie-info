@@ -17,6 +17,10 @@ const config: Config = {
         line: "rgba(255,255,255,0.14)",
         "line-dark": "rgba(14,26,20,0.14)",
         muted: "rgba(244,241,234,0.6)",
+        // Palette département (héritée du site initial)
+        emerald: { DEFAULT: "#1a7a4e", light: "#22a864", deep: "#0f5c3a" },
+        gold: { DEFAULT: "#e8b860", deep: "#c9983a" },
+        navy: { DEFAULT: "#1a4a7a", light: "#2563a8" },
       },
       fontFamily: {
         display: ["var(--font-display)", "serif"],
